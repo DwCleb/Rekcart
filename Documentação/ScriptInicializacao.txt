@@ -1,0 +1,25 @@
+
+
+
+
+
+
+
+
+
+
+
+			#include <SoftwareSerial.h> //inicia biblioteca serial via software
+			SoftwareSerial mySerial(2, 3); // atribui os pinos 2 e 3 como tx rx respectivamente
+			void setup()
+			{
+			mySerial.begin(19200); // taxa de comm. com SIM900
+			Serial.begin(19200); // taxa de comm. com Arduino-PC
+			}
+			void loop()
+			{
+			if (mySerial.available()) // serial do SIM900 disponivel?
+			Serial.write(mySerial.read()); // escrevo o que recebi do Arduino-PC no SIM900
+			if (Serial.available()) // porta serial do Arduino-PC disponivel?
+			mySerial.write(Serial.read()); // escrevo o que recebi do SIM900 no  Arduino-PC
+			}

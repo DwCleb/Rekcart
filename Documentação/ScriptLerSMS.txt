@@ -1,0 +1,119 @@
+#include <SoftwareSerial.h>
+SoftwareSerial myGSM(3,2);// define pinos TX/RX da porta software serial VARIA DE MODULO PARA MODULO!
+const int vermelho  = A0; // define saida LED vermelho
+const int verde     = A1; // define saida LED verde
+const int azul      = A2; // define saida LED azul
+String  linhaAtual  = "";              
+String  sms         = "";  
+String  smsAnterior = "";  
+boolean lendoSMS    = false;
+char inChar         = 0;
+void setup()
+{
+  delay(2500); // delay para inicializar sistema com segurança
+  myGSM.begin(19200);// inicia soft serial com baud rate 19200 VARIA DE MODULO PARA MODULO!
+  Serial.begin(19200);// inicia porta serial do arduino
+  testaModulo();// testa modulo se OK esta correto
+   Serial.println("Configurando SMS modo texto");
+  myGSM.println("AT+CMGF=1");
+  delay(800);
+  Serial.println("Apagando todas SMSs posteriores");
+  myGSM.println("AT+CMGD=1,4");
+  delay(800);
+  pinMode(vermelho,OUTPUT);
+  pinMode(verde,OUTPUT);
+  pinMode(azul,OUTPUT);
+  digitalWrite(vermelho,LOW);
+  digitalWrite(verde,LOW);
+  digitalWrite(azul,LOW);
+}
+void loop()
+{
+  myGSM.println("AT+CMGR=1");
+  delay(2000);
+  while(myGSM.available()!=0)
+  {
+    inChar = myGSM.read();
+    linhaAtual += inChar;
+    if (inChar == '\n')
+    {
+      linhaAtual = "";
+    }
+    if (linhaAtual.endsWith(">"))
+    {
+      lendoSMS = true;
+      sms = "";
+    }
+    if (lendoSMS)
+    {
+      if (inChar != '<')
+      {
+        sms += inChar;
+      }
+      else
+      {
+        lendoSMS = false;
+        if(sms!=smsAnterior)
+        {
+          sms.replace(">","");
+          Serial.print("SMS Recebido: ");
+          Serial.println(sms);
+          smsAnterior=sms;
+        }
+        if(sms == "Acende Vermelho")
+        {
+          Serial.println("Acendendo Vermelho");
+          digitalWrite(vermelho,HIGH);
+        }
+        if(sms == "Apaga Vermelho")
+        {
+          Serial.println("Apagando Vermelho");
+          digitalWrite(vermelho,LOW);
+        }
+        if(sms == "Acende Verde")
+        {
+          Serial.println("Acendendo Verde");
+          digitalWrite(verde,HIGH);
+        }
+        if(sms == "Apaga Verde")
+        {
+          Serial.println("Apagando Verde");
+          digitalWrite(verde,LOW);
+        }
+        if(sms == "Acende Azul")
+        {
+          Serial.println("Acendendo Azul");
+          digitalWrite(azul,HIGH);
+        }
+        if(sms == "Apaga Azul")
+        {
+          Serial.println("Apagando Azul");
+          digitalWrite(azul,LOW);
+        }
+        if(sms == smsAnterior)
+        {
+          myGSM.println("AT+CMGD=1,4");
+          delay(800);
+          sms="";
+        }    
+      }
+    }
+  }
+  myGSM.flush();
+  Serial.flush();
+}
+void testaModulo()
+{
+  Serial.println("Testando modulo GSM");
+  myGSM.println("AT");
+  mostraDadosSerial();
+  Serial.println("");
+}
+void mostraDadosSerial()
+{
+  delay(100);
+  while(myGSM.available()!=0)
+  {
+    Serial.write(myGSM.read());
+  }
+}

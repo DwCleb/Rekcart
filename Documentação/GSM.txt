@@ -1,0 +1,7 @@
+	links para consultas:
+introdução GSM : http://microembarcado.blogspot.com.br/2013/09/arduino-gprs-sim900-introducao-i.html
+ler SMS e executar : http://microembarcado.blogspot.com.br/2013/11/arduino-gprs-sim900-ler-sms-executar.html
+Tutorial (espanhol) : https://www.youtube.com/watch?v=CCrNJ7qr78Q
+Tutorial, enviar e receber SMS: https://www.youtube.com/watch?v=EP2R-qiCg2k
+Instructables: http://www.instructables.com/id/SIM900-GSM-GPRS-SHIELD-CON-ARDUINO-UNO/?ALLSTEPS
+Referencias por Arduino: https://www.arduino.cc/en/Reference/GSM
